@@ -9,13 +9,14 @@ type Project struct {
 	Visit_URL   string
 	Source_URL  string
 	Youtube_URL string
+	Image_URL   string
 }
 
 func createProject(p *Project) error {
 	_, err := db.Exec(`INSERT INTO projects 
-						(title, description, visit_url, source_url, youtube_url) 
-						VALUES (?,?,?,?,?)`,
-		p.Title, p.Description, p.Visit_URL, p.Source_URL, p.Youtube_URL)
+		(title, description, visit_url, source_url, youtube_url, image_url) 
+		VALUES (?,?,?,?,?,?)`,
+		p.Title, p.Description, p.Visit_URL, p.Source_URL, p.Youtube_URL, p.Image_URL)
 
 	return err
 }
@@ -34,6 +35,7 @@ func FindAllProject() []Project {
 			&project.Visit_URL,
 			&project.Source_URL,
 			&project.Youtube_URL,
+			&project.Image_URL,
 		)
 
 		if err != nil {
@@ -55,6 +57,7 @@ func FindProject(id int) (Project, error) {
 		&project.Visit_URL,
 		&project.Source_URL,
 		&project.Youtube_URL,
+		&project.Image_URL,
 	)
 
 	return project, err
@@ -66,9 +69,9 @@ func (p *Project) Save() error {
 	}
 
 	_, err := db.Exec(`UPDATE projects 
-		SET title=?, description=?, visit_url=?, source_url=?, youtube_url=? 
+		SET title=?, description=?, visit_url=?, source_url=?, youtube_url=?, image_url=? 
 		WHERE id=?`,
-		p.Title, p.Description, p.Visit_URL, p.Source_URL, p.Youtube_URL, p.ID)
+		p.Title, p.Description, p.Visit_URL, p.Source_URL, p.Youtube_URL, p.Image_URL, p.ID)
 
 	if err != nil {
 		log.Println("DB error updating", p, err)
