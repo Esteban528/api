@@ -57,6 +57,11 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		if strings.HasPrefix(r.RequestURI, "/resources") && r.Method == http.MethodGet {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		token := r.Header.Get("Authorization")
 
 		if token == "" || !strings.HasPrefix(token, "Basic ") {
@@ -107,6 +112,9 @@ func Load() {
 
 	mux.Handle("/projects", AuthMiddleware(http.HandlerFunc(ProjectHandler)))
 	mux.Handle("/projects/", AuthMiddleware(http.HandlerFunc(ProjectHandler)))
+
+	mux.Handle("/resources", AuthMiddleware(http.HandlerFunc(ResourceHandler)))
+	mux.Handle("/resources/", AuthMiddleware(http.HandlerFunc(ResourceHandler)))
 
 	log.Println("Server listenning at 8080")
 	http.ListenAndServe(":8080", mux)
