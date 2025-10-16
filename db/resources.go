@@ -4,11 +4,11 @@ package db
 import "log"
 
 type Resource struct {
-	ID          int
-	Title       string
-	Description string
-	Link        string
-	Image_URL   string
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Link        string `json:"link"`
+	Image_URL   string `json:"image_url"`
 }
 
 func createResource(r *Resource) error {

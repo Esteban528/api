@@ -6,12 +6,12 @@ import (
 )
 
 type Post struct {
-	ID          int
-	Author      string
-	Title       string
-	Description string
-	Content     string
-	Date        string
+	ID          int    `json:"id"`
+	Author      string `json:"author"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Content     string `json:"content"`
+	Date        string `json:"date"`
 }
 
 func createPost(p *Post) error {

@@ -35,7 +35,9 @@ func Load() {
 		title TEXT,
 		description TEXT,
 		visit_url TEXT,
-		source_url TEXT
+		source_url TEXT,
+		youtube_url TEXT,
+		image_url TEXT
 	)`)
 
 	if err != nil {
@@ -43,12 +45,12 @@ func Load() {
 	}
 
 	_, err = con.Exec(`CREATE TABLE IF NOT EXISTS resources (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	title TEXT,
-	description TEXT,
-	link TEXT,
-	image_url TEXT
-)`)
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		title TEXT,
+		description TEXT,
+		link TEXT,
+		image_url TEXT
+	)`)
 
 	if err != nil {
 		log.Fatal("Resource model load error ", err)

@@ -3,14 +3,15 @@ package db
 import "log"
 
 type Project struct {
-	ID          int
-	Title       string
-	Description string
-	Visit_URL   string
-	Source_URL  string
-	Youtube_URL string
-	Image_URL   string
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Visit_URL   string `json:"visit_url"`
+	Source_URL  string `json:"source_url"`
+	Youtube_URL string `json:"youtube_url"`
+	Image_URL   string `json:"image_url"`
 }
+
 
 func createProject(p *Project) error {
 	_, err := db.Exec(`INSERT INTO projects 
