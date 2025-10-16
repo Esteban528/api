@@ -14,6 +14,7 @@ func main() {
 	if err != nil {
 		log.Panic(".env file missing")
 	}
+
 	db.Load()
 	api.Load()
 

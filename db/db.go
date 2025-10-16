@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -10,7 +11,8 @@ import (
 var db *sql.DB
 
 func Load() {
-	con, err := sql.Open("sqlite3", "./data.db")
+	dbPath := os.Getenv("DB_PATH")
+	con, err := sql.Open("sqlite3", dbPath)
 
 	if err != nil {
 		log.Panic("Database error", err)
