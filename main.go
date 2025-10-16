@@ -1,8 +1,8 @@
 package main
 
 import (
-	// "estebandev_api/api"
-	// "estebandev_api/db"
+	"estebandev_api/api"
+	"estebandev_api/db"
 	"log"
 
 	"github.com/nxtgo/env"
@@ -14,7 +14,7 @@ func main() {
 	if err != nil {
 		log.Panic(".env file missing")
 	}
-	//db.Load()
-	//api.Load()
+	db.Load()
+	api.Load()
 
 }
