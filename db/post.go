@@ -8,6 +8,7 @@ import (
 type Post struct {
 	ID          int
 	Author      string
+	Title       string
 	Description string
 	Content     string
 	Date        string
@@ -15,8 +16,8 @@ type Post struct {
 
 func createPost(p *Post) error {
 	_, err := db.Exec(`INSERT INTO posts 
-						(author, description, content, created_at) VALUES (?,?,?,?)`,
-		p.Author, p.Description, p.Content, time.Now())
+						(author, title, description, content, created_at) VALUES (?,?,?,?,?)`,
+		p.Author, p.Title, p.Description, p.Content, time.Now())
 
 	if err == nil {
 		log.Printf("Post created: %+v\n", p)
@@ -29,7 +30,7 @@ func FindPost(id int) (Post, error) {
 	post := Post{}
 
 	row := db.QueryRow("SELECT * FROM posts WHERE id = ?", id)
-	err := row.Scan(&post.ID, &post.Author, &post.Description, &post.Content, &post.Date)
+	err := row.Scan(&post.ID, &post.Author, &post.Title, &post.Description, &post.Content, &post.Date)
 
 	if err != nil {
 		log.Println("Database error: ", err)
@@ -45,7 +46,7 @@ func FindAllPost() []Post {
 
 	for rows.Next() {
 		post := Post{}
-		err := rows.Scan(&post.ID, &post.Author,
+		err := rows.Scan(&post.ID, &post.Author, &post.Title,
 			&post.Description, &post.Content, &post.Date)
 
 		if err != nil {
@@ -63,8 +64,8 @@ func (p *Post) Save() error {
 		return createPost(p)
 	}
 
-	_, err := db.Exec(`UPDATE posts SET author=?, description=?, content=?, created_at=? 
-	WHERE id=?`, p.Author, p.Description, p.Content, p.Date, p.ID)
+	_, err := db.Exec(`UPDATE posts SET author=?, title=?, description=?, content=?, created_at=? 
+	WHERE id=?`, p.Author, p.Title, p.Description, p.Content, p.Date, p.ID)
 
 	if err == nil {
 		log.Printf("Post updated: %+v\n", p)
