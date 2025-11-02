@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"estebandev_api/db"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -24,11 +25,15 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 
 func PostUploadHandler(w http.ResponseWriter, r *http.Request) {
 	var post db.Post
-	if err := ParseJson(r.Body, post); err != nil {
+	println(r.Body)
+	if err := ParseJson(r.Body, &post); err != nil {
 		log.Println("Parsing json", err)
 		http.Error(w, "Invalid or malformed JSON", http.StatusBadRequest)
 		return
 	}
+
+	println("struct")
+	fmt.Println(post)
 
 	if r.Method == http.MethodPost {
 		post.ID = 0
@@ -44,7 +49,7 @@ func PostUploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostDeleteHandler(w http.ResponseWriter, r *http.Request) {
-	endpoint := strings.SplitAfter(r.RequestURI, "/projects/")
+	endpoint := strings.SplitAfter(r.RequestURI, "/post/")
 	if len(endpoint) < 2 {
 		http.Error(w, "missing ID", http.StatusBadRequest)
 		return
@@ -67,7 +72,7 @@ func PostDeleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostGetHandler(w http.ResponseWriter, r *http.Request) {
-	endpoint := strings.SplitAfter(r.RequestURI, "/projects/")
+	endpoint := strings.SplitAfter(r.RequestURI, "/post/")
 	all := len(endpoint) < 2
 
 	if all {

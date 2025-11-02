@@ -16,7 +16,7 @@ var passE string
 
 func ParseJson(body io.ReadCloser, v any) error {
 	defer body.Close()
-	return json.NewDecoder(body).Decode(&v)
+	return json.NewDecoder(body).Decode(v)
 }
 
 func WriteJson(w http.ResponseWriter, status int, v any) {

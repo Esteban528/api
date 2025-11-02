@@ -15,13 +15,16 @@ type Post struct {
 }
 
 func createPost(p *Post) error {
-	_, err := db.Exec(`INSERT INTO posts 
+	res, err := db.Exec(`INSERT INTO posts 
 						(author, title, description, content, created_at) VALUES (?,?,?,?,?)`,
 		p.Author, p.Title, p.Description, p.Content, time.Now())
 
 	if err == nil {
 		log.Printf("Post created: %+v\n", p)
 	}
+
+	id, _ := res.LastInsertId()
+	p.ID = int(id)
 
 	return err
 }
@@ -42,7 +45,12 @@ func FindPost(id int) (Post, error) {
 func FindAllPost() []Post {
 	posts := []Post{}
 
-	rows, _ := db.Query("SELECT * FROM posts")
+	rows, err := db.Query("SELECT * FROM posts")
+
+	if err != nil {
+		return posts
+	}
+	defer rows.Close()
 
 	for rows.Next() {
 		post := Post{}
@@ -64,8 +72,8 @@ func (p *Post) Save() error {
 		return createPost(p)
 	}
 
-	_, err := db.Exec(`UPDATE posts SET author=?, title=?, description=?, content=?, created_at=? 
-	WHERE id=?`, p.Author, p.Title, p.Description, p.Content, p.Date, p.ID)
+	_, err := db.Exec(`UPDATE posts SET author=?, title=?, description=?, content=? 
+	WHERE id=?`, p.Author, p.Title, p.Description, p.Content, p.ID)
 
 	if err == nil {
 		log.Printf("Post updated: %+v\n", p)

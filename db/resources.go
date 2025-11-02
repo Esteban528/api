@@ -23,7 +23,13 @@ func createResource(r *Resource) error {
 func FindAllResources() []Resource {
 	resources := []Resource{}
 
-	rows, _ := db.Query("SELECT * FROM resources")
+	rows, err := db.Query("SELECT * FROM resources")
+
+	if err != nil {
+		return resources
+	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		resource := Resource{}

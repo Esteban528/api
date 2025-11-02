@@ -25,7 +25,12 @@ func createProject(p *Project) error {
 func FindAllProject() []Project {
 	projects := []Project{}
 
-	rows, _ := db.Query("SELECT * FROM projects")
+	rows, err := db.Query("SELECT * FROM projects")
+
+	if err != nil {
+		return projects
+	}
+	defer rows.Close()
 
 	for rows.Next() {
 		project := Project{}

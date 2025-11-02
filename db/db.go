@@ -21,6 +21,7 @@ func Load() {
 	_, err = con.Exec(`CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 		author TEXT,
+		title TEXT,
 		description TEXT,
 		content TEXT,
 		created_at TEXT
