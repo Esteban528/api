@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -48,9 +49,6 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		DebugRequest(r)
 
-		w.Header().Set("Access-Control-Allow-Origin", "https://estebandev.xyz")
-		w.Header().Set("Access-Control-Allow-Methods", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
 		if strings.HasPrefix(r.RequestURI, "/post") && r.Method == http.MethodGet {
 			next.ServeHTTP(w, r)
 			return
@@ -106,6 +104,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 }
 
 func corsMiddleware(next http.Handler) http.Handler {
+	fmt.Println(os.Getenv("CORS_ORIGIN"),"|", os.Getenv("CORS_METHODS"),"|", os.Getenv("CORS_HEADERS"))
 	
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("CORS_ORIGIN"))
