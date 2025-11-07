@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -46,7 +47,10 @@ func DebugRequest(r *http.Request) {
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		DebugRequest(r)
+		if os.Getenv("SCOPE") == "dev" {
+			DebugRequest(r)
+		}
+
 		if strings.HasPrefix(r.RequestURI, "/post") && r.Method == http.MethodGet {
 			next.ServeHTTP(w, r)
 			return
@@ -101,20 +105,36 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func corsMiddleware(next http.Handler) http.Handler {
+	
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("CORS_ORIGIN"))
+		w.Header().Set("Access-Control-Allow-Methods", os.Getenv("CORS_METHODS"))
+		w.Header().Set("Access-Control-Allow-Headers", os.Getenv("CORS_HEADERS"))
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func Load() {
 	userE = os.Getenv("API_USER")
 	passE = os.Getenv("API_PASSWORD")
 	log.Println("API ENVs loaded")
 
 	mux := http.NewServeMux()
-	mux.Handle("/post", AuthMiddleware(http.HandlerFunc(PostHandler)))
-	mux.Handle("/post/", AuthMiddleware(http.HandlerFunc(PostHandler)))
+	mux.Handle("/post", corsMiddleware(AuthMiddleware(http.HandlerFunc(PostHandler))))
+	mux.Handle("/post/", corsMiddleware(AuthMiddleware(http.HandlerFunc(PostHandler))))
 
-	mux.Handle("/projects", AuthMiddleware(http.HandlerFunc(ProjectHandler)))
-	mux.Handle("/projects/", AuthMiddleware(http.HandlerFunc(ProjectHandler)))
+	mux.Handle("/projects", corsMiddleware(AuthMiddleware(http.HandlerFunc(ProjectHandler))))
+	mux.Handle("/projects/", corsMiddleware(AuthMiddleware(http.HandlerFunc(ProjectHandler))))
 
-	mux.Handle("/resources", AuthMiddleware(http.HandlerFunc(ResourceHandler)))
-	mux.Handle("/resources/", AuthMiddleware(http.HandlerFunc(ResourceHandler)))
+	mux.Handle("/resources", corsMiddleware(AuthMiddleware(http.HandlerFunc(ResourceHandler))))
+	mux.Handle("/resources/", corsMiddleware(AuthMiddleware(http.HandlerFunc(ResourceHandler))))
 
 	log.Println("Server listenning at 8080")
 	http.ListenAndServe(":8080", mux)
