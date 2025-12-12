@@ -1,12 +1,18 @@
 package db
 
 import (
-	"estebandev_api/types"
 	"log"
 	"time"
 )
 
-type Post types.Post
+type Post struct {
+	ID          int    `json:"id"`
+	Author      string `json:"author"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Content     string `json:"content"`
+	Date        string `json:"date"`
+}
 
 func createPost(p *Post) error {
 	res, err := db.Exec(`INSERT INTO posts 
@@ -19,8 +25,6 @@ func createPost(p *Post) error {
 
 	id, _ := res.LastInsertId()
 	p.ID = int(id)
-
-	events.NotifyAll[Post]("create_post", *p)
 
 	return err
 }
@@ -74,8 +78,6 @@ func (p *Post) Save() error {
 	if err == nil {
 		log.Printf("Post updated: %+v\n", p)
 	}
-
-	events.NotifyAll[Post]("update_post", *p)
 
 	return err
 }

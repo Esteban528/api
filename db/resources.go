@@ -1,11 +1,15 @@
 package db
 
-import (
-	"estebandev_api/types"
-	"log"
-)
 
-type Resource types.Resource
+import "log"
+
+type Resource struct {
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Link        string `json:"link"`
+	Image_URL   string `json:"image_url"`
+}
 
 func createResource(r *Resource) error {
 	_, err := db.Exec(`INSERT INTO resources 
