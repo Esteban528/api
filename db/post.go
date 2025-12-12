@@ -1,6 +1,7 @@
 package db
 
 import (
+	"estebandev_api/events"
 	"log"
 	"time"
 )
@@ -14,6 +15,12 @@ type Post struct {
 	Date        string `json:"date"`
 }
 
+func init() {
+	events.AddPublisher[*Post]("create_post")
+	events.AddPublisher[*Post]("update_post")
+	events.AddPublisher[*Post]("delete_post")
+}
+
 func createPost(p *Post) error {
 	res, err := db.Exec(`INSERT INTO posts 
 						(author, title, description, content, created_at) VALUES (?,?,?,?,?)`,
@@ -25,6 +32,8 @@ func createPost(p *Post) error {
 
 	id, _ := res.LastInsertId()
 	p.ID = int(id)
+
+	events.NotifyAll[*Post]("create_post", p)
 
 	return err
 }
@@ -79,6 +88,8 @@ func (p *Post) Save() error {
 		log.Printf("Post updated: %+v\n", p)
 	}
 
+	events.NotifyAll[*Post]("update_post", p)
+
 	return err
 }
 
@@ -87,5 +98,8 @@ func (p *Post) Delete() error {
 	if err != nil {
 		log.Println("DB error deleting", p, err)
 	}
+
+	events.NotifyAll[*Post]("delete_post", p)
+
 	return err
 }
