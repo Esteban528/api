@@ -1,6 +1,8 @@
 package events
 
-import "errors"
+import (
+	"errors"
+)
 
 var pubs = make(map[string]any)
 
@@ -24,7 +26,7 @@ func (p *Publisher[T]) NotifyAll(newStatus T) {
 
 func AddPublisher[T any](key string) error {
 	if _, exists := pubs[key]; !exists {
-		pubs[key] = make([]Subscriber[T], 0)
+		pubs[key] = &Publisher[T]{Subs: []Subscriber[T]{}}
 		return nil
 	}
 
@@ -41,9 +43,8 @@ func Subscribe[T any](key string, sub Subscriber[T]) error {
 		return errors.New("key doesn't exist")
 	}
 
-	subs := pubs[key].([]Subscriber[T])
-	subs = append(subs, sub)
-	pubs[key] = subs
+	pub := pubs[key].(*Publisher[T])
+	pub.Subs = append(pub.Subs, sub)
 	return nil
 }
 
