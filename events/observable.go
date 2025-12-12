@@ -53,6 +53,6 @@ func NotifyAll[T any](key string, value T) error {
 		return errors.New("key doesn't exist")
 	}
 
-	Get[T](key).NotifyAll(value)
+	go Get[T](key).NotifyAll(value)
 	return nil
 }
